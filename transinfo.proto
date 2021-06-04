@@ -1,0 +1,22 @@
+// python -m grpc_tools.protoc --python_out=. --grpc_python_out=. -I. fileName.proto
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.transinfo";
+option java_outer_classname = "TransInfoProto";
+option objc_class_prefix = "TIP";
+
+package transinfo;
+
+service TransInfo {
+  rpc GetInfo (InfoSending) returns (SuccessReply) {}
+}
+
+message InfoSending {
+  string info = 1;
+}
+
+message SuccessReply {
+  int64 reply = 1;
+}
