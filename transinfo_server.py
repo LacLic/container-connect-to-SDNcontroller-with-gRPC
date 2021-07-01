@@ -55,13 +55,18 @@ def query(saddr, threshold1=1024, threshold2=1024*1024):
 def ban(saddr, banned=True):  # True => banned, False => warning
     item = session.query(BanIP).filter(BanIP.ban_ip == saddr).first()
     print(item)
+    global update_time
+
     if item == None:
         new_ban_ip = BanIP(ban_ip=saddr, banned=banned)
         session.add(new_ban_ip)
+        if banned:
+            update_time = int(time.time())
         session.commit()
         print(str(saddr) + " is added to the banned list.")
     elif item.banned == False and banned == True:
         item.banned = True
+        update_time = int(time.time())
         session.commit()
     else:
         print("Banned ip add failed. " + str(saddr) + " exists.")
@@ -94,9 +99,11 @@ class TransInfo:
             ban(request.saddr, banned=True)
         elif isToBan == 1:
             ban(request.saddr, banned=False)
+        ban_list = get_ban_list()
 
-        if update_time >= request.prev_time:
-            return transinfo_pb2.SuccessReply(reply_code=2, reply=str(get_ban_list()))
+        print(str(update_time) + " >= " + str(request.prev_time))
+        if update_time >= request.prev_time and ban_list:
+            return transinfo_pb2.SuccessReply(reply_code=2, reply=str(ban_list))
         else:
             return transinfo_pb2.SuccessReply(reply_code=1, reply="")
 
