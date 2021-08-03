@@ -6,9 +6,9 @@ from transinfo_server import Pkg, BanIP, get_db_session
 import json
 
 
-def get_saddr_byte(saddr, session=get_db_session()):
+def get_saddr_byte(daddr, session=get_db_session()):
     # return total saddr traffic flows(bytes) in json format
-    pkgs = session.query(Pkg).filter(Pkg.saddr == saddr).all()  # .all()
+    pkgs = session.query(Pkg).filter(Pkg.daddr == daddr).all()  # .all()
     ret = 0
     last_time = 0
     try:
@@ -54,5 +54,5 @@ def get_ban_ips(session=get_db_session()):
 
 
 if __name__ == '__main__':
-    get_saddr_byte('30.0.1.67', get_db_session())
+    get_saddr_byte('30.0.1.139', get_db_session())
     get_ban_ips(get_db_session())
